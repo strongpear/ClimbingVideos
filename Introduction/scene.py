@@ -124,7 +124,7 @@ class ThirdScene(Scene):
         self.wait(3)
         self.play(Create(rectGroup.shift(UP*1.5+LEFT*0.5)))
         self.play(Write(labelGroup.shift(UP*1.5+LEFT*0.5)))
-        self.wait(12)
+         
         self.play(rectGroup.animate.stretch(1.2, dim=0, about_edge=LEFT), UpdateFromFunc(physicalLabel, update_phys_label), UpdateFromFunc(realLabel, update_real_label), UpdateFromFunc(mentalLabel, update_mental_label))
         self.wait(1)
         self.play(blue_rect.animate.stretch(2.5, dim=0, about_edge=LEFT), UpdateFromFunc(realLabel, update_real_label), UpdateFromFunc(mentalLabel, update_mental_label))
