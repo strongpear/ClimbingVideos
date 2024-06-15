@@ -58,10 +58,56 @@ class SecondScene(Scene):
         self.play(*[FadeOut(mob) for mob in self.mobjects])
 class ThirdScene(Scene):
     def construct(self):
-        meText = Text("Me", color=YELLOW).to_corner(DL)
-        studentsText = Text("Students").to_corner(DR)
-        whatISay = [Text("Hi! I'm Mr. Lee."), Text("You think I can't tell?")]
-        whatKidsSay = [Text("Wow, this guy sucks!"), Text("I'm going to cheat on every assignment..."), Text("PhotoMath Time!")]
-
-        self.play(GrowFromCenter(meText), GrowFromCenter(studentsText))
+        meText = Text("Me", color=YELLOW)
+        usText = Text("Us", color=YELLOW).shift(LEFT)
+        equalsText = Tex("=")
+        studentsText = Text("Students", color=BLUE)
+        meArrow = Arrow(LEFT, RIGHT, color=RED)
+        studentsArrow = Arrow(LEFT, RIGHT, color=RED)
+        
+        nameTextGroup = VGroup(meText, studentsText).arrange(DOWN, buff=1.5).shift(LEFT*2)
+        arrowGroup = VGroup(meArrow, studentsArrow).arrange(DOWN, buff=1.5).next_to(nameTextGroup, RIGHT)
+        whatISay = ["Hi! I'm Mr. Lee.", "You think I don't notice?", "Wow, ya'll are behind. "]
+        whatKidsSay = ["Wow, this guy sucks!", "I'm going to cheat :)", "PhotoMath Time!", "Dude, just get me \n through this class."]
+        myTextBox = CreateTextBox(whatISay[0]).next_to(meArrow, RIGHT)
+        studentsTextBox = CreateTextBox(whatKidsSay[0]).next_to(studentsArrow, RIGHT)
+        self.play(GrowFromCenter(nameTextGroup), Create(arrowGroup))
         self.wait(1)
+        self.play(GrowFromCenter(myTextBox))
+        self.wait(1)
+        self.play(GrowFromCenter(studentsTextBox))
+        self.wait(1)
+        self.play(Transform(studentsTextBox, CreateTextBox(whatKidsSay[1]).next_to(studentsArrow, RIGHT)))
+        self.wait(1)
+        self.play(Transform(myTextBox, CreateTextBox(whatISay[1]).next_to(meArrow, RIGHT)))
+        self.wait(1)
+        self.play(Transform(studentsTextBox, CreateTextBox(whatKidsSay[2]).next_to(studentsArrow, RIGHT)))
+        self.wait(1)
+        self.play(Transform(myTextBox, CreateTextBox(whatISay[2]).next_to(meArrow, RIGHT)))
+        self.wait(1)
+        self.play(Transform(studentsTextBox, CreateTextBox(whatKidsSay[3]).next_to(studentsArrow, RIGHT)))
+        self.wait(1)
+        self.play(Transform(meText, usText.shift(LEFT)), FadeOut(meArrow), Write(equalsText.shift(LEFT*0.5)), studentsText.animate.center().shift(RIGHT*1.5), FadeOut(myTextBox), FadeOut(studentsTextBox), FadeOut(studentsArrow))
+        self.wait(1)
+        self.play(*[FadeOut(mob) for mob in self.mobjects])
+        self.wait(1)
+
+class FourthScene(Scene):
+    def construct(self):
+        leftCircle = Circle(radius=2,color=BLUE).shift(LEFT*2.5)
+        rightCircle = Circle(radius=2).shift(RIGHT*2.5)
+        leftLabel = Text("Climbing", color=BLUE).next_to(leftCircle, UP)
+        rightLabel = Text("Math", color=RED).next_to(rightCircle, UP)
+        leftCircleGroup = VGroup(leftCircle, leftLabel)
+        rightCircleGroup = VGroup(rightCircle, rightLabel)
+
+
+        self.play(Create(leftCircleGroup), Create(rightCircleGroup))
+        self.wait(1)
+        self.play(leftCircleGroup.animate.shift(RIGHT), rightCircleGroup.animate.shift(LEFT))
+        self.wait(1)
+def CreateTextBox(text):
+    boxText = Text(text, font_size=24)
+    textBox = SurroundingRectangle(boxText)
+    textGroup = VGroup(boxText, textBox)
+    return textGroup
