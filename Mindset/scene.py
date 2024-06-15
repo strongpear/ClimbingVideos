@@ -6,59 +6,91 @@ class FirstScene(Scene):
 
 
         # Text
-        textPerformance = Text('Climbing Performance')
-        textPhysical = Text('Physical', color=RED).shift(LEFT*3)
-        textMental = Text('Mental', color=BLUE).shift(RIGHT*3)
-        textGroup = VGroup(textPhysical, textMental)
-        # Rectangles
-        red_rect = Rectangle(width=3.5, height=3, color=RED, fill_color=RED, fill_opacity=0.8)
-        blue_rect = Rectangle(width=1.5, height=3, color=BLUE, fill_color=BLUE, fill_opacity=0.8)
-        red_rect.shift(LEFT * 1.5)
-        blue_rect.shift(RIGHT * 1.5)
-        rectGroup = VGroup(red_rect, blue_rect).shift(DOWN)
+        initialText1 = Text('Previously...')
+        # Constants
+        gradeScaling = 0.8
+        physicalGrades = [5, 10]
+        mental = [0.4, 0.98]
 
-        # Second Set of Rectangles
-        red_rect1 = Rectangle(width=2.5, height=3, color=RED, fill_color=RED, fill_opacity=0.8).shift(LEFT*1.5)
-        blue_rect1 = Rectangle(width=2.5, height=3, color=BLUE, fill_color=BLUE, fill_opacity=0.8).shift(RIGHT*1.5)
-        rectGroup1 = VGroup(red_rect1, blue_rect1).shift(DOWN)
+        # Text
+        textPhysical = Text('Physical', color=RED, font_size=36)
+        textMental = Text('Mental', color=BLUE, font_size=36)
+        textReal = Text('Real Grade', color=GREEN, font_size=36)
+        textGroup = VGroup(textPhysical, textMental, textReal).arrange(direction=RIGHT, aligned_edge=UP, buff=1.5).to_edge(UP)
+        textImprove = Text("Improving Mental Game?", color=BLUE, font_size=36)
+        t1 = Text("Mindset", color=YELLOW, font_size=24)
+        t2 = Text("Intuition", color=YELLOW, font_size=24)
+        t3 = Text("Visualization", color=YELLOW, font_size=24)
+        t4 = Text("Tactics", color=YELLOW, font_size=24)
+
+        tGroup = VGroup(t1, t2, t3, t4).arrange(RIGHT)
+        
+        # Rectangles
+        red_rect = Rectangle(width = physicalGrades[0] * gradeScaling, height=1, color=RED, fill_opacity=0.8)
+        blue_rect = Rectangle(width = physicalGrades[0] * gradeScaling * mental[0], height=1, color=BLUE, fill_opacity=0.8).align_to(red_rect, LEFT)
+
+        # Labels
+        physicalLabel = Tex(red_rect.width/gradeScaling, color=RED).move_to(red_rect.get_corner(UP + RIGHT) + 0.5 * red_rect.get_height() * UP)
+        mentalLabel = Tex(round(blue_rect.width/red_rect.width, 2), color=WHITE).move_to(blue_rect.get_center())
+        realLabel = Tex(round(blue_rect.width/gradeScaling, 2), color=GREEN).move_to(blue_rect.get_corner(UP + RIGHT) + 0.5 * red_rect.get_height() * UP)
+
+        # Groups
+        rectGroup = VGroup(red_rect, blue_rect)
+        labelGroup = VGroup(physicalLabel,mentalLabel,realLabel)
+
+        # Update Functions
+        def update_phys_label(label):
+            label.become(Tex(round(red_rect.width/gradeScaling, 2), color=RED).move_to(red_rect.get_corner(UP + RIGHT) + 0.5 * red_rect.get_height() * UP))
+        def update_real_label(label):
+            label.become(Tex(round(blue_rect.width/gradeScaling, 2), color=GREEN).move_to(blue_rect.get_corner(UP + RIGHT) + 0.5 * red_rect.get_height() * UP))
+        def update_mental_label(label):
+            label.become(Tex(round(blue_rect.width/red_rect.width, 2), color=WHITE).move_to(blue_rect.get_center()))
        
         self.add(initialText)
-        self.wait(10)
+        self.wait(12)
+        self.play(Transform(initialText, initialText1))
+        self.wait(2)
+        self.play(initialText.animate.to_edge(UP))
         # Animate
-        self.play(Transform(initialText, textPerformance), remover=False)
-        self.wait(10)
-        self.play(initialText.animate.shift(UP*3))
-        self.play(Write(textGroup))
-        self.wait(5)
-        self.play(textGroup.animate.shift(UP*1.5))
-        self.play(Create(rectGroup1))
+        self.play(Write(textGroup.next_to(initialText, DOWN)))
         self.wait(1)
-        self.play(Transform(rectGroup1, rectGroup))
-        self.wait(5)
-        self.play(FadeOut(textPhysical, rectGroup1, initialText))
+        self.play(Create(rectGroup))
+        self.wait(3)
+        self.play(Write(labelGroup))
         self.wait(1)
-        self.play(textMental.animate.move_to(ORIGIN))
-        self.wait(10)
-        self.play(FadeOut(textMental))
+        self.play(rectGroup.animate.stretch(1.6, dim=0, about_edge=LEFT), UpdateFromFunc(physicalLabel, update_phys_label), UpdateFromFunc(realLabel, update_real_label), UpdateFromFunc(mentalLabel, update_mental_label))
+        self.wait(1)
+        self.play(blue_rect.animate.stretch(1.5, dim=0, about_edge=LEFT), UpdateFromFunc(realLabel, update_real_label), UpdateFromFunc(mentalLabel, update_mental_label))
+        self.wait(1)
+        self.play(FadeOut(textGroup, rectGroup, labelGroup), Transform(initialText, textImprove))
+        self.wait(6)
+        self.play(GrowFromCenter(tGroup.shift(DOWN)))
+        self.wait(4)
+        self.play(FadeOut(initialText), FadeOut(tGroup))
+        self.wait(2)
+
+
+
 
 
 class SecondScene(Scene):
     def construct(self):
 
-        firstText = Text("Fixed vs Growth Mindset")
+        firstText = Text("Fixed vs Growth Mindset?")
         crossThrough = Line(start=firstText.get_left(), end=firstText.get_right(), color=RED)
         arrow = Arrow(UP, DOWN)
         firstTextGroup = VGroup(firstText, crossThrough)
         secondText = Text("Learning", color=BLUE).shift(DOWN*2)
 
 
-        self.add(firstText)
-        self.wait(1)
+        self.play(Write(firstText))
+        self.wait(2)
         self.play(Create(crossThrough))
-        self.wait(1)
+        self.wait(4)
         self.play(firstTextGroup.animate.shift(UP*2), GrowArrow(arrow), GrowFromCenter(secondText))
-        self.wait(1)
+        self.wait(3)
         self.play(*[FadeOut(mob) for mob in self.mobjects])
+        self.wait(2)
 
 class ThirdScene(Scene):
     def construct(self):
@@ -72,30 +104,33 @@ class ThirdScene(Scene):
         
         nameTextGroup = VGroup(meText, studentsText).arrange(DOWN, buff=1.5).shift(LEFT*2)
         arrowGroup = VGroup(meArrow, studentsArrow).arrange(DOWN, buff=1.5).next_to(nameTextGroup, RIGHT)
-        whatISay = ["Hi! I'm Mr. Lee.", "You think I don't notice?", "Wow, ya'll are behind. "]
-        whatKidsSay = ["Wow, this guy sucks!", "I'm going to cheat :)", "PhotoMath Time!", "Dude, just get me \n through this class."]
+        whatISay = ["Hi! I'm Mr. Lee.", "You think I don't notice?", "Wow, ya'll are behind. ", "It's not your fault :("]
+        whatKidsSay = ["Wow, this guy sucks!", "I'm going to cheat :)", "PhotoMath Time!", "We literally don't care...", "Yeah, It's been hard lately."]
         myTextBox = CreateTextBox(whatISay[0]).next_to(meArrow, RIGHT)
         studentsTextBox = CreateTextBox(whatKidsSay[0]).next_to(studentsArrow, RIGHT)
 
 
         self.play(GrowFromCenter(nameTextGroup), Create(arrowGroup))
-        self.wait(1)
         self.play(GrowFromCenter(myTextBox))
-        self.wait(1)
+        self.wait(5)
         self.play(GrowFromCenter(studentsTextBox))
-        self.wait(1)
+        self.wait(2)
         self.play(Transform(studentsTextBox, CreateTextBox(whatKidsSay[1]).next_to(studentsArrow, RIGHT)))
         self.wait(1)
         self.play(Transform(myTextBox, CreateTextBox(whatISay[1]).next_to(meArrow, RIGHT)))
-        self.wait(1)
+        self.wait(4)
         self.play(Transform(studentsTextBox, CreateTextBox(whatKidsSay[2]).next_to(studentsArrow, RIGHT)))
-        self.wait(1)
+        self.wait(12)
         self.play(Transform(myTextBox, CreateTextBox(whatISay[2]).next_to(meArrow, RIGHT)))
-        self.wait(1)
+        self.wait(9)
         self.play(Transform(studentsTextBox, CreateTextBox(whatKidsSay[3]).next_to(studentsArrow, RIGHT)))
-        self.wait(1)
+        self.wait(9)
+        self.play(Transform(myTextBox, CreateTextBox(whatISay[3]).next_to(meArrow, RIGHT)))
+        self.wait(2)
+        self.play(Transform(studentsTextBox, CreateTextBox(whatKidsSay[4]).next_to(studentsArrow, RIGHT)))
+        self.wait(2)
         self.play(Transform(meText, usText.shift(LEFT)), FadeOut(meArrow), Write(equalsText.shift(LEFT*0.5)), studentsText.animate.center().shift(RIGHT*1.5), FadeOut(myTextBox), FadeOut(studentsTextBox), FadeOut(studentsArrow))
-        self.wait(1)
+        self.wait(10)
         self.play(*[FadeOut(mob) for mob in self.mobjects])
         self.wait(1)
 
@@ -108,13 +143,33 @@ class FourthScene(Scene):
         rightLabel = Text("Math", color=RED).next_to(rightCircle, UP)
         leftCircleGroup = VGroup(leftCircle, leftLabel)
         rightCircleGroup = VGroup(rightCircle, rightLabel)
-
-
+        myText = Text("Pattern Recognition \n\n Critical Thinking", color=GREEN)
+        intersection = Intersection(leftCircle, rightCircle, color=GREEN, fill_opacity=0)
+        myLeftText = Text("Concepts", color=BLUE).shift(DOWN + LEFT*4)
+        myRightText = Text("Techniques", color=RED).shift(DOWN + RIGHT*4)
+        myLeftArrow = Arrow(start=leftLabel.get_corner(DR), end=myLeftText.get_edge_center(UP))
+        myRightArrow = Arrow(start=rightLabel.get_corner(DL), end=myRightText.get_edge_center(UP))
+        
         self.play(Create(leftCircleGroup), Create(rightCircleGroup))
         self.wait(1)    
         self.play(leftCircleGroup.animate.shift(RIGHT), rightCircleGroup.animate.shift(LEFT))
         self.wait(1)
-
+        intersection = Intersection(leftCircle, rightCircle, color=GREEN, fill_opacity=0)
+        self.add(intersection)
+        self.play(Indicate(intersection))
+        self.wait(1)
+        self.play(Transform(intersection, myText), FadeOut(leftCircle), FadeOut(rightCircle))
+        self.wait(2)
+        self.play(FadeOut(intersection))
+        self.play(GrowArrow(myLeftArrow))
+        self.play(GrowFromCenter(myLeftText))
+        self.play(GrowArrow(myRightArrow))
+        self.play(GrowFromCenter(myRightText))
+        self.wait(2)
+        textGroup = VGroup(leftLabel, rightLabel)
+        problemsText = Text("Problems", color=GREEN)
+        self.play(ReplacementTransform(textGroup, problemsText.move_to(textGroup.get_center()).shift(RIGHT*0.5)))
+        self.wait(2)
 class FifthScene(Scene):
     def construct(self):
 
@@ -205,6 +260,7 @@ class EighthScene(Scene):
             self.play(MoveAlongPath(dot, circle), run_time=3, rate_func=linear)
         self.play(*[FadeOut(mob) for mob in self.mobjects])
         self.wait(2)
+
 def CreateTextBox(text):
     boxText = Text(text, font_size=24)
     textBox = SurroundingRectangle(boxText)
