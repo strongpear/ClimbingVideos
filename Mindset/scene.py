@@ -145,8 +145,8 @@ class FourthScene(Scene):
         rightCircleGroup = VGroup(rightCircle, rightLabel)
         myText = Text("Pattern Recognition \n\n Critical Thinking", color=GREEN)
         intersection = Intersection(leftCircle, rightCircle, color=GREEN, fill_opacity=0)
-        myLeftText = Text("Concepts", color=BLUE).shift(DOWN + LEFT*4)
-        myRightText = Text("Techniques", color=RED).shift(DOWN + RIGHT*4)
+        myLeftText = Text("Techniques", color=BLUE).shift(DOWN + LEFT*4)
+        myRightText = Text("Concepts", color=RED).shift(DOWN + RIGHT*4)
         myLeftArrow = Arrow(start=leftLabel.get_corner(DR), end=myLeftText.get_edge_center(UP))
         myRightArrow = Arrow(start=rightLabel.get_corner(DL), end=myRightText.get_edge_center(UP))
         
@@ -159,16 +159,20 @@ class FourthScene(Scene):
         self.play(Indicate(intersection))
         self.wait(1)
         self.play(Transform(intersection, myText), FadeOut(leftCircle), FadeOut(rightCircle))
-        self.wait(2)
+        self.wait(1)
         self.play(FadeOut(intersection))
-        self.play(GrowArrow(myLeftArrow))
-        self.play(GrowFromCenter(myLeftText))
         self.play(GrowArrow(myRightArrow))
         self.play(GrowFromCenter(myRightText))
-        self.wait(2)
+        self.wait(1)
+        self.play(GrowArrow(myLeftArrow))
+        self.play(GrowFromCenter(myLeftText))
+
+        self.wait(4)
         textGroup = VGroup(leftLabel, rightLabel)
         problemsText = Text("Problems", color=GREEN)
         self.play(ReplacementTransform(textGroup, problemsText.move_to(textGroup.get_center()).shift(RIGHT*0.5)))
+        self.wait(3)
+        self.play(*[FadeOut(mob) for mob in self.mobjects])
         self.wait(2)
 class FifthScene(Scene):
     def construct(self):
@@ -178,6 +182,10 @@ class FifthScene(Scene):
         titleText = Text("Math", color=RED).to_edge(UP)
         titleText1 = Text("Climbing", color=BLUE).to_edge(UP)
         movementText = Text("Movement Idea", color=GREEN, font_size=24)
+        flagText = Text("Flag", color=GREEN, font_size=24)
+        dropKneeText= Text("Drop Knee", color=GREEN, font_size=24)
+        flagText1 = Text("Small Back Flag", color=GREEN, font_size=24)
+        questionText = Text("???", color=GREEN, font_size=24)
         problemText = Text("Single Problem", color=GREEN, font_size=24)
         ellipse = Ellipse(width=3, height=4, color=GREEN)
         ellipseText = Text("Group of Problems", color=GREEN, font_size=24).next_to(ellipse, UP)
@@ -196,25 +204,56 @@ class FifthScene(Scene):
         self.wait(1)
         self.play(Indicate(mathStepGroup[cruxStep], color=GREEN))
         self.play(Transform(mathStepGroup[cruxStep], Text("Key Step", font_size=24, color=GREEN).move_to(mathStepGroup[cruxStep].get_center())))
-        self.wait(1)
+        self.wait(4)
         self.play(ReplacementTransform(mathStepGroup, climbingStepGroup.arrange(DOWN)), Transform(titleText, titleText1))
         self.wait(1)
         self.play(Indicate(climbingStepGroup[cruxStep], color=GREEN))
         self.play(Transform(climbingStepGroup[cruxStep], Text("Crux Move", font_size=24, color=GREEN).move_to(climbingStepGroup[cruxStep].get_center())))
         self.wait(1)
         self.play(*[FadeOut(climbingStepGroup[i]) for i in range(numSteps) if i !=cruxStep], climbingStepGroup[cruxStep].animate.center().shift(LEFT*2), GrowArrow(arrow))
-        self.wait(1)
-        self.play(Write(movementText.next_to(arrow, RIGHT)))
+        self.wait(2)
+        self.play(Write(flagText.next_to(arrow, RIGHT)))
+        self.wait(3)
+        self.play(Transform(flagText, dropKneeText.next_to(arrow, RIGHT)))
+        self.wait(6)
+        self.play(Transform(flagText, questionText.next_to(arrow, RIGHT)))
+        self.wait(6)
+        self.play(Transform(flagText, flagText1.next_to(arrow, RIGHT)))
+        self.wait(4)
+        self.play(ReplacementTransform(flagText, movementText.next_to(arrow, RIGHT)))
         self.wait(1)
 
         myGroup = VGroup(climbingStepGroup[cruxStep], movementText)
         self.play(Swap(*myGroup))
         self.play(ReplacementTransform(climbingStepGroup[cruxStep], problemText.next_to(arrow, RIGHT)))
-        self.wait(1)
+        self.wait(3)
         self.play(ReplacementTransform(problemText, ellipseGroup.next_to(arrow, RIGHT)))
-        self.wait(2)
+        self.wait(9)
         self.play(*[FadeOut(mob) for mob in self.mobjects])
         self.wait(2)
+
+
+class FifthPointFiveScene(Scene):
+    def construct(self):
+        arrow1 = Arrow(LEFT, RIGHT)
+        arrow2 = Arrow(LEFT, RIGHT)
+        rightHandText = Text("Right Hand").next_to(arrow1, LEFT)
+        rightFootText = Text("Right Foot").next_to(arrow1, RIGHT)
+        leftHandText = Text("Left Hand").next_to(arrow2, LEFT)
+        leftFootText = Text("Left Foot").next_to(arrow2, RIGHT)
+        topGroup = VGroup(rightHandText, arrow1, rightFootText)
+        bottomGroup = VGroup(leftHandText, arrow2, leftFootText)
+        fullGroup = VGroup(topGroup, bottomGroup).arrange(DOWN) 
+
+        self.play(GrowFromCenter(rightHandText))
+        self.play(GrowArrow(arrow1))
+        self.play(GrowFromEdge(rightFootText, LEFT))
+        self.play(GrowFromEdge(leftHandText, LEFT))
+        self.play(GrowArrow(arrow2))
+        self.play(GrowFromEdge(leftFootText, LEFT))
+        self.wait(2)
+
+
 class SixthScene(ThreeDScene):
     def construct(self):
 
@@ -230,7 +269,7 @@ class SixthScene(ThreeDScene):
         self.play(ReplacementTransform(circle, sphere)) # Transform circle to sphere
         self.move_camera(phi = PI / 3)
         self.begin_ambient_camera_rotation(rate = 0.1) # Rotate around object
-        self.wait(12)
+        self.wait(15)
         self.play(Uncreate(sphere))
         self.wait()
 
@@ -239,10 +278,14 @@ class SeventhScene(Scene):
         text = Text("Beta")
         text1 = Text("= PhotoMath")
 
+        self.wait(1)
         self.play(Write(text))
+        self.wait(10)
         self.play(text.animate.shift(LEFT))
         self.play(Write(text1.next_to(text, RIGHT)))
-        self.wait(1)
+        self.wait(12 )
+        self.play(FadeOut(text), FadeOut(text1))
+        self.wait(2)
 
 class EighthScene(Scene):
 
@@ -256,11 +299,52 @@ class EighthScene(Scene):
         self.play(Create(dot))
         self.play(GrowFromCenter(circle))
         self.play(dot.animate.shift(RIGHT*0.8))
-        for i in range(5):
-            self.play(MoveAlongPath(dot, circle), run_time=3, rate_func=linear)
+        for i in range(4):
+            self.play(MoveAlongPath(dot, circle), run_time=5, rate_func=linear)
+        self.wait(2)
         self.play(*[FadeOut(mob) for mob in self.mobjects])
         self.wait(2)
 
+
+class Introduction(Scene):
+    def construct(self):
+        path = VMobject()
+        dot = Dot().shift(LEFT*2.55)
+        path.set_points_as_corners([dot.get_center(), dot.get_center()])
+        def update_path(path):
+            previous_path = path.copy()
+            previous_path.add_points_as_corners([dot.get_center()])
+            path.become(previous_path)
+        path.add_updater(update_path)
+        self.add(path)
+        self.add(dot)
+        self.play(Rotating(dot, radians=PI*2, about_point=ORIGIN, run_time=15))
+        self.wait()
+
+        iterations = 10
+        sides = 3
+        poly = RegularPolygon(n=sides, radius=2.5)
+        circle = Circle(radius=2.55)
+        poly.set_fill(BLUE, opacity=0.8)
+        self.play(Create(poly))
+        self.play(Create(circle))
+        self.wait(1)
+
+        for i in range(iterations):
+            nextPoly = RegularPolygon(n=i+sides+1, radius=2.5)
+            nextPoly.set_fill(BLUE, opacity=0.8)
+            self.play(Transform(poly, nextPoly))
+            self.wait()
+
+        for i in range(iterations):
+            nextPoly = RegularPolygon(n=iterations+sides-i-1,radius=2.5)
+            nextPoly.set_fill(BLUE, opacity=0.8)
+            self.play(Transform(poly, nextPoly))
+            self.wait()
+        self.play(*[FadeOut(mob) for mob in self.mobjects])
+        self.wait(1)
+
+            
 def CreateTextBox(text):
     boxText = Text(text, font_size=24)
     textBox = SurroundingRectangle(boxText)
